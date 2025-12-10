@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Ваша корзина</h2>
+
+
+  {% if cart_items %}
+    <div class="row">
+      <div class="col-md-8">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Обложка</th>
+              <th>Название</th>
+              <th>Автор</th>
+              <th>Цена</th>
+              <th>Количество</th>
+              <th>Итого</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+              <tr>
+                <td>
+                  <img
+                    src="{{ item.book.cover or 'https://via.placeholder.com/80x120?text=No+Cover' }}"
+                    alt="{{ item.book.title }}"
+                    style="width: 60px; height: 90px; object-fit: cover;"
+                  >
+                </td>
+                <td>{{ item.book.title }}</td>
+                <td>{{ item.book.author }}</td>
+                <td>₽{{ item.book.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₽{{ item.book.price * item.quantity }}</td>
+                <td>
+                  <form method="POST" action="{{ url_for('main.remove_from_cart', item_id=item.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                      Удалить
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5>Итого к оплате:</h5>
+            <p class="fs-4 text-primary">₽{{ total_price }}</p>
+            <form method="POST" action="{{ url_for('main.checkout') }}">
+              <button type="submit" class="btn btn-success w-100">
+                Оформить заказ
+              </button>
+            </form>
+            <a href="{{ url_for('main.main_route') }}" class="btn btn-primary w-100">Вернуться в каталог</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">Ваша корзина пуста.</p>
+    <a href="{{ url_for('main.main_route') }}" class="btn btn-primary">Вернуться в каталог</a>
+  {% endif %}
+</div>
+{% endblock %}

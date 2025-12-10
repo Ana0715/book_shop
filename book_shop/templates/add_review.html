@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+
+{% block title %}Добавить отзыв к "{{ book.title }}"{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Добавить отзыв к книге «{{ book.title }}»</h2>
+
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <div class="mb-3">
+      <label for="rating" class="form-label">Оценка (1–5)</label>
+      <input
+        type="number"
+        id="rating"
+        name="rating"
+        class="form-control {% if 'error' in get_flashed_messages() %}is-invalid{% endif %}"
+        min="1"
+        max="5"
+        value="{{ request.form.get('rating', '') }}"
+        required
+      >
+      {% if 'Оценка должна быть' in get_flashed_messages() %}
+        <div class="invalid-feedback">
+          Пожалуйста, укажите оценку от 1 до 5.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="text" class="form-label">Текст отзыва</label>
+      <textarea
+        id="text"
+        name="text"
+        class="form-control {% if 'Текст отзыва обязателен' in get_flashed_messages() %}is-invalid{% endif %}"
+        rows="4"
+        placeholder="Поделитесь впечатлениями..."
+        required
+      >{{ request.form.get('text', '') }}</textarea>
+      {% if 'Текст отзыва обязателен' in get_flashed_messages() %}
+        <div class="invalid-feedback">
+          Текст отзыва не может быть пустым.
+        </div>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+    <a href="{{ url_for('main.book_detail', book_id=book.id) }}" class="btn btn-secondary">
+      Назад
+    </a>
+  </form>
+</div>
+{% endblock %}

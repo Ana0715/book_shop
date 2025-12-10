@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Оформление заказа{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Оформление заказа</h2>
+
+  <div class="row">
+    <div class="col-md-8">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Обложка</th>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Итого</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart_items %}
+            <tr>
+              <td>
+                <img
+                  src="{{ item.book.cover or 'https://via.placeholder.com/80x120?text=No+Cover' }}"
+                  alt="{{ item.book.title }}"
+                  style="width: 60px; height: 90px; object-fit: cover;"
+                >
+              </td>
+              <td>{{ item.book.title }}</td>
+              <td>{{ item.book.author }}</td>
+              <td>₽{{ item.book.price }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₽{{ item.book.price * item.quantity }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5>Итого к оплате:</h5>
+          <p class="fs-4 text-primary">₽{{ total_price }}</p>
+
+          <form method="POST">
+            <div class="mb-3">
+              <label class="form-label">Способ получения</label>
+              <div class="form-check">
+                <input class="form-check-input delivery-option" type="radio" name="delivery_type" id="pickup" value="самовывоз" required>
+                <label class="form-check-label" for="pickup">Самовывоз</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input delivery-option" type="radio" name="delivery_type" id="delivery" value="доставка" required>
+                <label class="form-check-label" for="delivery">Доставка</label>
+              </div>
+            </div>
+
+            <div id="address-field" class="mb-3" style="display: none;">
+              <label for="address" class="form-label">Адрес доставки</label>
+              <input type="text" class="form-control" id="address" name="address" placeholder="Улица, дом, квартира">
+            </div>
+
+            <div class="mb-3 form-check">
+              <input class="form-check-input" type="checkbox" id="confirm" name="confirm">
+              <label class="form-check-label" for="confirm">
+                Я подтверждаю заказ и согласен с условиями
+              </label>
+            </div>
+
+            <div class="d-flex gap-2">
+              <a href="{{ url_for('main.cart') }}" class="btn btn-secondary">Отменить</a>
+              <button type="submit" class="btn btn-success">Оформить заказ</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deliveryOption = document.querySelectorAll('.delivery-option');
+    const addressField = document.getElementById('address-field');
+
+    deliveryOption.forEach(option => {
+      option.addEventListener('change', function() {
+        if (this.value === 'доставка') {
+          addressField.style.display = 'block';
+        } else {
+          addressField.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

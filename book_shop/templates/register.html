@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Регистрация</h2>
+
+          <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+              {{ form.username.label(class="form-label") }}
+              {{ form.username(class="form-control", placeholder="Придумайте имя пользователя") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.email.label(class="form-label") }}
+              {{ form.email(class="form-control", placeholder="Ваш email") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.phone.label(class="form-label") }}
+              {{ form.phone(class="form-control", placeholder="+7 (XXX) XXX-XX-XX") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              {{ form.password(class="form-control", placeholder="Придумайте пароль") }}
+            </div>
+
+            <div class="mb-4">
+              {{ form.confirm_password.label(class="form-label") }}
+              {{ form.confirm_password(class="form-control", placeholder="Повторите пароль") }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">Зарегистрироваться</button>
+
+
+            <div class="text-center">
+              <a href="{{ url_for('main.login') }}" class="text-decoration-none">Уже есть аккаунт? Войти</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-4 text-center">
+  <a href="{{ url_for('main.main_route') }}" class="btn btn-outline-secondary">← Вернуться на главную</a>
+</div>
+{% endblock %}

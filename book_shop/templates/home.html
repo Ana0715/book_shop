@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <div class="col-md-3 bg-white shadow-sm" style="min-height: 100vh; position: fixed; width: 250px;">
+      <div class="d-flex flex-column h-100">
+        <div class="px-3 py-4 border-bottom">
+          <h5 class="mb-0 text-primary">Категории книг</h5>
+        </div>
+
+        <div class="flex-grow-1 overflow-auto px-2">
+          <div class="list-group list-group-flush">
+            {% for genre in genres %}
+              <a href="{{ url_for('main.catalog_by_genre', genre_name=genre) }}"
+                 class="list-group-item list-group-item-action py-3">
+                {{ genre }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9 offset-md-3">
+      <div class="bg-white px-4 py-3 border-bottom shadow-sm">
+        <div class="d-flex justify-content-between align-items-center">
+          <form action="{{ url_for('main.search') }}" method="get" class="d-flex gap-2" style="flex-grow: 1; max-width: 500px;">
+            <input
+              type="text"
+              name="q"
+              placeholder="Найти книгу по названию или автору..."
+              class="form-control"
+              value="{{ request.args.get('q', '') }}"
+              required
+            >
+            <button type="submit" class="btn btn-primary">Искать</button>
+          </form>
+
+          <div class="d-flex gap-2">
+            {% if user_data.show_login %}
+              <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary">Войти</a>
+            {% endif %}
+            {% if user_data.show_register %}
+              <a href="{{ url_for('main.register') }}" class="btn btn-outline-secondary">Зарегистрироваться</a>
+            {% endif %}
+            {% if user_data.show_logout %}
+              <a href="{{ url_for('main.cart') }}" class="btn btn-info" id="cart-btn">Корзина</a>
+              <a href="{{ url_for('main.orders') }}" class="btn btn-outline-info">История заказов</a>
+              <a href="{{ url_for('main.logout') }}" class="btn btn-danger">Выйти</a>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 py-5">
+        <div class="text-center mb-5">
+          <h1 class="display-4">Добро пожаловать, {{ user_data.name }}!</h1>
+        </div>
+
+        <section class="top-books row justify-content-center g-4">
+          {% for book in top_books %}
+            <div class="col-md-6 col-lg-4">
+              <div class="card shadow-sm h-100">
+                <img
+                  src="{{ book.cover or 'https://via.placeholder.com/200x300?text=No+Cover' }}"
+                  alt="{{ book.title }}"
+                  class="card-img-top"
+                  style="height: 250px; object-fit: cover;"
+                >
+                <div class="card-body">
+                  <h5 class="card-title">{{ book.title }}</h5>
+                  <p class="card-text text-muted"><strong>Автор:</strong> {{ book.author }}</p>
+                  <p class="card-text"><strong>Цена:</strong> <span class="text-primary">₽{{ "%.2f"|format(book.price) }}</span></p>
+                  {% if book.rating %}
+                    <p class="card-text"><strong>Рейтинг:</strong> {{ "%.1f"|format(book.rating) }}</p>
+                  {% endif %}
+                  <a href="{{ url_for('main.book_detail', book_id=book.id) }}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
